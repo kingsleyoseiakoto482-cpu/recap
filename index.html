@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex Notes — SHS Science Summarizer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Animated Background -->
+    <div class="bg-mesh">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="glass-nav">
+        <div class="logo">CODEX</div>
+        <ul class="nav-links">
+            <li><a href="#summarizer">Summarizer</a></li>
+            <li><a href="#shs-notes">SHS Notes</a></li>
+            <li><a href="#about">About</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero">
+        <h1 class="gradient-text">Smart Notes for<br>SHS Science Students</h1>
+        <p class="subtitle">Upload, snap, or type your notes. Get instant summaries.</p>
+        <div class="scroll-indicator">↓</div>
+    </header>
+
+    <!-- Summarizer Section -->
+    <section id="summarizer" class="section">
+        <div class="container">
+            <h2 class="section-title">Note Summarizer</h2>
+            
+            <!-- Input Methods -->
+            <div class="input-methods">
+                <button class="method-btn active" onclick="switchMethod('type')">✍️ Type Notes</button>
+                <button class="method-btn" onclick="switchMethod('upload')">📁 Upload File</button>
+                <button class="method-btn" onclick="switchMethod('camera')">📷 Take Photo</button>
+            </div>
+
+            <!-- Type -->
+            <div id="method-type" class="method-panel active">
+                <textarea id="note-input" placeholder="Paste or type your notes here... (e.g. Photosynthesis is the process by which plants convert light energy into chemical energy...)"></textarea>
+                <div class="controls">
+                    <button class="btn-primary" onclick="summarizeText()">Summarize</button>
+                    <button class="btn-secondary" onclick="clearText()">Clear</button>
+                </div>
+            </div>
+
+            <!-- Upload -->
+            <div id="method-upload" class="method-panel">
+                <div class="drop-zone" id="drop-zone">
+                    <p>Drag & drop files here or click to browse</p>
+                    <input type="file" id="file-input" accept=".txt,.pdf,.doc,.docx,.png,.jpg,.jpeg" hidden>
+                    <small>Supports: TXT, PDF, DOC, Images</small>
+                </div>
+                <div id="file-preview" class="preview-box"></div>
+                <div class="controls">
+                    <button class="btn-primary" onclick="summarizeFile()">Summarize File</button>
+                </div>
+            </div>
+
+            <!-- Camera -->
+            <div id="method-camera" class="method-panel">
+                <div class="camera-box">
+                    <video id="camera-stream" autoplay playsinline></video>
+                    <canvas id="camera-canvas" hidden></canvas>
+                    <div id="camera-placeholder">
+                        <p>Camera preview will appear here</p>
+                        <button class="btn-primary" onclick="startCamera()">Start Camera</button>
+                    </div>
+                    <button id="snap-btn" class="btn-primary" onclick="takePhoto()" hidden>📸 Capture</button>
+                </div>
+                <div id="photo-preview" class="preview-box"></div>
+                <div class="controls">
+                    <button class="btn-primary" onclick="summarizeImage()">Summarize Photo</button>
+                </div>
+            </div>
+
+            <!-- Output -->
+            <div id="summary-output" class="glass-card output-card" hidden>
+                <h3>📝 Summary</h3>
+                <div id="summary-text"></div>
+                <div class="output-meta">
+                    <span id="word-count"></span>
+                    <span id="compression-rate"></span>
+                </div>
+                <button class="btn-secondary" onclick="copySummary()">Copy</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SHS Notes Section -->
+    <section id="shs-notes" class="section">
+        <div class="container">
+            <h2 class="section-title">SHS Science Notes</h2>
+            
+            <div class="level-tabs">
+                <button class="level-btn active" onclick="switchLevel(1)">SHS 1</button>
+                <button class="level-btn" onclick="switchLevel(2)">SHS 2</button>
+                <button class="level-btn" onclick="switchLevel(3)">SHS 3</button>
+            </div>
+
+            <!-- SHS 1 -->
+            <div id="level-1" class="level-content active">
+                <div class="subjects-grid">
+                    <div class="subject-card" onclick="showTopic('physics', 'measurement')">
+                        <div class="subject-icon">⚛️</div>
+                        <h3>Physics</h3>
+                        <ul>
+                            <li>Physical Quantities & Units</li>
+                            <li>Measurement</li>
+                            <li>Scalars & Vectors</li>
+                            <li>Kinematics</li>
+                        </ul>
+                    </div>
+                    <div class="subject-card" onclick="showTopic('chemistry', 'atoms')">
+                        <div class="subject-icon">⚗️</div>
+                        <h3>Chemistry</h3>
+                        <ul>
+                            <li>Atomic Structure</li>
+                            <li>Periodic Table</li>
+                            <li>Chemical Bonding</li>
+                            <li>States of Matter</li>
+                        </ul>
+                    </div>
+                    <div class="subject-card" onclick="showTopic('biology', 'cells')">
+                        <div class="subject-icon">🧬</div>
+                        <h3>Biology</h3>
+                        <ul>
+                            <li>Cell Structure</li>
+                            <li>Cell Division</li>
+                            <li>Classification</li>
+                            <li>Ecology Basics</li>
+                        </ul>
+                    </div>
+                    <div class="subject-card" onclick="showTopic('math', 'sets')">
+                        <div class="subject-icon">📐</div>
+                        <h3>Elective Math</h3>
+                        <ul>
+                            <li>Sets & Operations</li>
+                            <li>Real Numbers</li>
+                            <li>Algebraic Expressions</li>
+                            <li>Linear Equations</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SHS 2 -->
+            <div id="level-2" class="level-content">
+                <div class="subjects-grid">
+                    <div class="subject-card" onclick="showTopic('physics', 'dynamics')">
+                        <div class="subject-icon">⚛️</div>
+                        <h3>Physics</h3>
+                        <ul>
+                            <li>Dynamics (Newton's Laws)</li>
+                            <li>Work, Energy & Power</li>
+                            <li>Heat & Temperature</li>
+                            <li>Electrostatics</li>
+                        </ul>
+                    </div>
+                    <div class="subject-card" onclick="showTopic('chemistry', 'reactions')">
+                        <div class="subject-icon">⚗️</div>
+                        <h3>Chemistry</h3>
+                        <ul>
+                            <li>Chemical Reactions</li>
+                            <li>Stoichiometry</li>
+                            <li>Acids, Bases & Salts</li>
+                            <li>Redox Reactions</li>
+                        </ul>
+                    </div>
+                    <div class="subject-card" onclick="showTopic('biology', 'genetics')">
+                        <div class="subject-icon">🧬</div>
+                        <h3>Biology</h3>
+                        <ul>
+                            <li>Genetics</li>
+                            <li>Variation & Inheritance</li>
+                            <li>Plant Nutrition</li>
+                            <li>Human Digestive System</li>
+                        </ul>
+                    </div>
+                    <div class="subject-card" onclick="showTopic('math', 'calculus')">
+                        <div class="subject-icon">📐</div>
+                        <h3>Elective Math</h3>
+                        <ul>
+                            <li>Functions & Relations</li>
+                            <li>Trigonometry</li>
+                            <li>Calculus Basics</li>
+                            <li>Statistics</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SHS 3 -->
+            <div id="level-3" class="level-content">
+                <div class="subjects-grid">
+                    <div class="subject-card" onclick="showTopic('physics', 'electromagnetism')">
+                        <div class="subject-icon">⚛️</div>
+                        <h3>Physics</h3>
+                        <ul>
+                            <li>Current Electricity</li>
+                            <li>Electromagnetism</li>
+                            <li>Waves & Optics</li>
+                            <li>Atomic & Nuclear Physics</li>
+                        </ul>
+                    </div>
+                    <div class="subject-card" onclick="showTopic('chemistry', 'organic')">
+                        <div class="subject-icon">⚗️</div>
+                        <h3>Chemistry</h3>
+                        <ul>
+                            <li>Organic Chemistry</li>
+                            <li>Hydrocarbons</li>
+                            <li>Polymers</li>
+                            <li>Environmental Chemistry</li>
+                        </ul>
+                    </div>
+                    <div class="subject-card" onclick="showTopic('biology', 'physiology')">
+                        <div class="subject-icon">🧬</div>
+                        <h3>Biology</h3>
+                        <ul>
+                            <li>Human Physiology</li>
+                            <li>Circulatory System</li>
+                            <li>Nervous System</li>
+                            <li>Reproduction & Development</li>
+                        </ul>
+                    </div>
+                    <div class="subject-card" onclick="showTopic('math', 'mechanics')">
+                        <div class="subject-icon">📐</div>
+                        <h3>Elective Math</h3>
+                        <ul>
+                            <li>Mechanics</li>
+                            <li>Probability</li>
+                            <li>Vectors & Geometry</li>
+                            <li>Differential Equations</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topic Viewer -->
+            <div id="topic-viewer" class="glass-card topic-modal" hidden>
+                <button class="close-btn" onclick="closeTopic()">×</button>
+                <h3 id="topic-title">Topic</h3>
+                <div id="topic-body" class="topic-content"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="about">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h2>CODEX</h2>
+                <p>Empowering SHS students with smart study tools.</p>
+            </div>
+            <div class="footer-contact">
+                <p>Contact us:</p>
+                <a href="mailto:kingsleykwabenaoseiakoto482@gmail.com" class="email-link">
+                    kingsleykwabenaoseiakoto482@gmail.com
+                </a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 CODEX. Built for Science Students.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
